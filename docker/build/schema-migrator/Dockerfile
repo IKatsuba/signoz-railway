@@ -13,7 +13,7 @@ RUN echo '#!/bin/sh\n\
   else\n\
   echo "Usage: $0 {sync|async}"\n\
   exit 1\n\
-  fi' > /entrypoint.sh && chmod +x /entrypoint.sh
+  fi' > /entrypoint.sh
 
 ENTRYPOINT ["/entrypoint.sh"]
 CMD ["sync"] 
