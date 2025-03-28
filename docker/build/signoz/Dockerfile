@@ -8,14 +8,14 @@ COPY common/dashboards /root/config/dashboards
 RUN mkdir -p /var/lib/signoz
 
 # Set environment variables
-ENV SIGNOZ_ALERTMANAGER_PROVIDER=signoz \
-  SIGNOZ_TELEMETRYSTORE_CLICKHOUSE_DSN=tcp://clickhouse:9000 \
-  SIGNOZ_SQLSTORE_SQLITE_PATH=/var/lib/signoz/signoz.db \
-  DASHBOARDS_PATH=/root/config/dashboards \
-  STORAGE=clickhouse \
-  GODEBUG=netdns=go \
-  TELEMETRY_ENABLED=true \
-  DEPLOYMENT_TYPE=docker-standalone-amd
+# ENV SIGNOZ_ALERTMANAGER_PROVIDER=signoz \
+#   SIGNOZ_TELEMETRYSTORE_CLICKHOUSE_DSN=tcp://clickhouse:9000 \
+#   SIGNOZ_SQLSTORE_SQLITE_PATH=/var/lib/signoz/signoz.db \
+#   DASHBOARDS_PATH=/root/config/dashboards \
+#   STORAGE=clickhouse \
+#   GODEBUG=netdns=go \
+#   TELEMETRY_ENABLED=true \
+#   DEPLOYMENT_TYPE=docker-standalone-amd
 
 # Expose ports
 EXPOSE 8080

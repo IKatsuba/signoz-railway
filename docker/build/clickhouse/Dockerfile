@@ -7,12 +7,6 @@ COPY common/clickhouse/custom-function.xml /etc/clickhouse-server/custom-functio
 COPY common/clickhouse/cluster.xml /etc/clickhouse-server/config.d/cluster.xml
 COPY common/clickhouse/user_scripts /var/lib/clickhouse/user_scripts/
 
-# Create data directory
-RUN mkdir -p /var/lib/clickhouse
-
-# Set permissions
-RUN chown -R clickhouse:clickhouse /var/lib/clickhouse
-
 # Expose ports
 EXPOSE 9000 8123 9181
 
@@ -22,5 +16,3 @@ HEALTHCHECK --interval=30s --timeout=5s --retries=3 \
 
 # Set ulimits
 RUN ulimit -n 262144
-
-USER clickhouse 
