@@ -1,0 +1,68 @@
+version: "3"
+
+services:
+  clickhouse:
+    build:
+      context: ../..
+      dockerfile: docker/build/clickhouse/Dockerfile
+    ports:
+      - "9000:9000"
+      - "8123:8123"
+      - "9181:9181"
+    volumes:
+      - clickhouse_data:/var/lib/clickhouse
+    environment:
+      - RAILWAY_STATIC_URL=${RAILWAY_STATIC_URL}
+    healthcheck:
+      test: ["CMD", "wget", "--spider", "-q", "0.0.0.0:8123/ping"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+
+  signoz:
+    build:
+      context: ../..
+      dockerfile: docker/build/signoz/Dockerfile
+    ports:
+      - "8080:8080"
+    volumes:
+      - signoz_data:/var/lib/signoz
+    environment:
+      - RAILWAY_STATIC_URL=${RAILWAY_STATIC_URL}
+      - SIGNOZ_TELEMETRYSTORE_CLICKHOUSE_DSN=tcp://clickhouse:9000
+    depends_on:
+      clickhouse:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "wget", "--spider", "-q", "localhost:8080/api/v1/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+
+  otel-collector:
+    build:
+      context: ../..
+      dockerfile: docker/build/otel-collector/Dockerfile
+    ports:
+      - "4317:4317"
+      - "4318:4318"
+    environment:
+      - RAILWAY_STATIC_URL=${RAILWAY_STATIC_URL}
+    depends_on:
+      signoz:
+        condition: service_healthy
+
+  schema-migrator:
+    build:
+      context: ../..
+      dockerfile: docker/build/schema-migrator/Dockerfile
+    command: sync
+    environment:
+      - RAILWAY_STATIC_URL=${RAILWAY_STATIC_URL}
+    depends_on:
+      clickhouse:
+        condition: service_healthy
+
+volumes:
+  clickhouse_data:
+  signoz_data: 
